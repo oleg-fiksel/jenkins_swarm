@@ -1,0 +1,21 @@
+pipeline {
+    agent{
+        docker {
+            label 'swarm'
+            image 'docker:dind'
+        }
+    }
+    stages {
+        stage('Build') {
+            steps {
+                git 'https://github.com/oleg-fiksel/golang-hello-world'
+                sh 'docker build -t my/hello-world .'
+            }
+        }
+        stage('Run') {
+            steps {
+                sh 'docker run --rm my/hello-world'
+            }
+        }
+    }
+}

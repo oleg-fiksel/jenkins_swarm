@@ -1,0 +1,16 @@
+pipeline {
+    agent{
+        docker {
+            label 'swarm'
+            image 'perl'
+        }
+    }
+    stages {
+        stage('Run') {
+            steps {
+                git 'https://github.com/oleg-fiksel/perl_xmas.git'
+                sh 'perl perl_xmas.pl'
+            }
+        }
+    }
+}

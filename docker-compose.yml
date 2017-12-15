@@ -1,0 +1,57 @@
+version: '3.1'
+services:
+  jenkins-master:
+    build: jenkins-master
+    image: dtr.docker.local/admin/jenkins-master
+    restart: on-failure
+    # using health check in Dockerfile because it supports start-period
+    # healthcheck:
+    #     test: ["CMD", "curl", "-f", "http://localhost:8080"]
+    #     interval: 10s
+    #     timeout: 10s
+    #     retries: 5
+    # deploy:
+    #   placement:
+    #     constraints: [node.role != manager]
+    ports:
+      - "8080:8080"
+    volumes:
+      - 'jenkins-master-home:/var/jenkins_home'
+
+  jenkins-slave:
+    build: jenkins-slave
+    image: dtr.docker.local/admin/jenkins-slave
+    restart: on-failure
+    depends_on:
+      - jenkins-master
+    # deploy:
+    #   placement:
+    #     constraints: [node.role != manager]
+    secrets:
+      - jenkins_slave_user
+      - jenkins_slave_password
+    environment:
+      - COMMAND_OPTIONS=-master http://jenkins-master:8080
+
+    volumes:
+      - 'jenkins-slave-workspace:/workspace'
+      - '/var/run/docker.sock:/var/run/docker.sock'
+
+volumes:
+  jenkins-master-home:
+    driver_opts:
+      type: nfs
+      o: "addr=shared-services.docker.local,nolock,soft,rw"
+      device: ":/mnt/docker_export/jenkins-master-home"
+  jenkins-slave-workspace:
+    driver_opts:
+      type: nfs
+      o: "addr=shared-services.docker.local,nolock,soft,rw"
+      device: ":/mnt/docker_export/jenkins-slave-workspace"
+
+# secrets must be created first
+secrets:
+  jenkins_slave_user:
+    external: true
+  jenkins_slave_password:
+    external: true
