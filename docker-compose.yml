@@ -17,6 +17,7 @@ services:
       - "8080:8080"
     volumes:
       - 'jenkins-master-home:/var/jenkins_home'
+      - 'jenkins-slave-workspace:/var/jenkins_home/workspace'
 
   jenkins-slave:
     build: jenkins-slave
