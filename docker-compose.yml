@@ -35,6 +35,7 @@ services:
 
     volumes:
       - 'jenkins-slave-workspace:/workspace'
+      - 'jenkins-slave-ucp-certs:/ucp-certs:ro'
       - '/var/run/docker.sock:/var/run/docker.sock'
 
 volumes:
@@ -48,6 +49,11 @@ volumes:
       type: nfs
       o: "addr=shared-services.docker.local,nolock,soft,rw"
       device: ":/mnt/docker_export/jenkins-slave-workspace"
+  jenkins-slave-ucp-certs:
+    driver_opts:
+      type: nfs
+      o: "addr=shared-services.docker.local,nolock,soft,rw"
+      device: ":/mnt/docker_export/jenkins-slave-ucp-certs"
 
 # secrets must be created first
 secrets:
