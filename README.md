@@ -64,3 +64,9 @@ Better way is to use DTR for the images.
 
 * `docker service logs -f jenkins_jenkins-master`
 * `docker service logs -f jenkins_jenkins-slave`
+
+# Known issues
+
+## no_proxy env variable is not working
+
+Details: https://issues.jenkins-ci.org/browse/JENKINS-42930
