@@ -6,12 +6,21 @@ ENV SWARM_CLIENT_VERSION="3.6" \
     USER_NAME_SECRET="" \
     PASSWORD_SECRET=""
 
-RUN adduser -G root -D jenkins && \
-    apk --update --no-cache add openjdk8-jre python py-pip git openssh ca-certificates openssl && \
+ARG user=jenkins
+ARG group=jenkins
+ARG uid=1000
+ARG gid=1000
+
+RUN addgroup -g ${gid} ${group} \
+    && adduser -u ${uid} -G ${group} -s /bin/sh -D ${user}
+
+RUN apk --update --no-cache add openjdk8-jre python py-pip git openssh ca-certificates openssl && \
     wget -q https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/${SWARM_CLIENT_VERSION}/swarm-client-${SWARM_CLIENT_VERSION}.jar -P /home/jenkins/ && \
     pip install docker-compose
 
-COPY run.sh /run.sh
-RUN chmod +x /run.sh
+COPY run.sh /home/jenkins/run.sh
+RUN chmod +x /home/jenkins/run.sh
 
-CMD ["/run.sh"]
+USER ${user}
+
+CMD ["/home/jenkins/run.sh"]
