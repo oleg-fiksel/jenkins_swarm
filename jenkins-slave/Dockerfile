@@ -9,7 +9,9 @@ ENV SWARM_CLIENT_VERSION="3.6" \
 ARG user=jenkins
 ARG group=jenkins
 ARG uid=1000
-ARG gid=1000
+# replace this with docker group on the host
+# stat /var/run/docker.sock
+ARG gid=998
 
 RUN addgroup -g ${gid} ${group} \
     && adduser -u ${uid} -G ${group} -s /bin/sh -D ${user}
